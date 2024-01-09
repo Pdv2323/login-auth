@@ -23,7 +23,7 @@ func UserSignUp(c *gin.Context) {
 
 	_, ok := Users[u.Email]
 	if ok {
-		c.JSON(http.StatusConflict, gin.H{"message": "You are already registered please sign up"})
+		c.JSON(http.StatusConflict, gin.H{"message": "You are already registered please login."})
 		return
 	}
 
@@ -37,9 +37,9 @@ func UserSignUp(c *gin.Context) {
 		ExpirationHours: 48,
 	}
 
-	SignedToken, jwtErr := JwtWrapper1.GenerateToken(u.Email)
-	if jwtErr != nil {
-		fmt.Println(jwtErr)
+	SignedToken, err := JwtWrapper1.GenerateToken(u.Email)
+	if err != nil {
+		fmt.Println(err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"error": false, "message": "successfully signed up", "token": SignedToken})
