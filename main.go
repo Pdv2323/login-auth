@@ -23,6 +23,6 @@ func main() {
 	r.Use(auth.Authz())
 	r.GET("/data1", login.GetAll)
 
-	r.Run(":8888")
+	r.Run(":8000")
 
 }

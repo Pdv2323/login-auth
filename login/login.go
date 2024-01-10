@@ -10,6 +10,8 @@ import (
 
 var Users map[string]models.User
 
+// var Users = signin.Users
+
 func UserLogin(c *gin.Context) {
 	var u models.User
 

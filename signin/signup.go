@@ -29,6 +29,7 @@ func UserSignUp(c *gin.Context) {
 
 	Users = map[string]models.User{
 		u.Email: u,
+		// u.Password: u,
 	}
 
 	JwtWrapper1 := jwt.JwtWrapper{

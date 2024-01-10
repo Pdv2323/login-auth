@@ -36,6 +36,7 @@ func (u *NewUser) CheckPasswordHash(password string) error {
 //New Structs
 
 type User struct {
+	gorm.Model
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
