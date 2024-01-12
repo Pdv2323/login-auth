@@ -6,14 +6,18 @@ import (
 	"net/http"
 
 	jwt "github.com/Pdv2323/Login-Auth/JWT"
+	"github.com/Pdv2323/Login-Auth/db"
 	"github.com/Pdv2323/Login-Auth/models"
 	"github.com/gin-gonic/gin"
 )
 
 var Users map[string]models.User
 
+// var Users models.User
+
 func UserSignUp(c *gin.Context) {
 	var u models.User
+	db.ConnectDB()
 
 	err := c.BindJSON(&u)
 	if err != nil {

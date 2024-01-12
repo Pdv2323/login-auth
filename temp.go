@@ -8,12 +8,22 @@ import (
 	auth "github.com/Pdv2323/Login-Auth/Auth"
 	jwt "github.com/Pdv2323/Login-Auth/JWT"
 	"github.com/gin-gonic/gin"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 type User struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
+
+const (
+	dbHost     = "localhost"
+	dbPort     = 5432
+	dbName     = "postgres"
+	dbUser     = "postgres"
+	dbPassword = "123"
+)
 
 var Users map[string]User
 
@@ -72,7 +82,20 @@ func GetAll(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": Users})
 }
 
+func ConnectDB() (db *gorm.DB, err error) {
+	dbInfo := fmt.Sprintf("host=%s port=%d dbname=%s user=%s password=%s sslmode=disable",
+		dbHost, dbPort, dbName, dbUser, dbPassword)
+	db, err = gorm.Open(postgres.Open(dbInfo), &gorm.Config{})
+	if err != nil {
+		return
+	}
+	return
+}
+
 func main() {
+
+	ConnectDB()
+
 	r := gin.Default()
 
 	// r.GET("/hello", func(c *gin.Context) {

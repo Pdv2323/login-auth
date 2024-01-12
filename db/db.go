@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 
+	"github.com/Pdv2323/Login-Auth/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -10,9 +11,9 @@ import (
 const (
 	dbHost     = "localhost"
 	dbPort     = 5432
-	dbName     = "mydb"
-	dbUser     = "myuser"
-	dbPassword = "mypassword"
+	dbName     = "postgres"
+	dbUser     = "postgres"
+	dbPassword = "123"
 )
 
 func ConnectDB() (db *gorm.DB, err error) {
@@ -22,5 +23,6 @@ func ConnectDB() (db *gorm.DB, err error) {
 	if err != nil {
 		return
 	}
+	db.AutoMigrate(&models.User{})
 	return
 }
