@@ -2,6 +2,7 @@ package main
 
 import (
 	auth "github.com/Pdv2323/Login-Auth/Auth"
+	database "github.com/Pdv2323/Login-Auth/db"
 	"github.com/Pdv2323/Login-Auth/login"
 	"github.com/Pdv2323/Login-Auth/signin"
 	"github.com/gin-gonic/gin"
@@ -18,7 +19,9 @@ func main() {
 	// r.GET("/user")
 	// r.GET("/user/{id}")
 	// r.DELETE("/user/{id}")
-
+	database.ConnectDB()
+	r.POST("/dbsignup", database.SignupToDatabase)
+	r.POST("/dblogin", database.LoginUsingDatabase)
 	r.POST("/login", login.UserLogin)
 	r.POST("/signup", signin.UserSignUp)
 	r.Use(auth.Authz())

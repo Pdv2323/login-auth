@@ -29,6 +29,7 @@ var Users map[string]User
 
 func UserSignUp(c *gin.Context) {
 	var u User
+	ConnectDB()
 
 	err := c.BindJSON(&u)
 	if err != nil {
@@ -62,6 +63,7 @@ func UserSignUp(c *gin.Context) {
 
 func UserLogin(c *gin.Context) {
 	var u User
+	ConnectDB()
 
 	err := c.BindJSON(&u)
 	if err != nil {

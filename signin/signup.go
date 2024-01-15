@@ -1,23 +1,29 @@
 package signin
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
 
 	jwt "github.com/Pdv2323/Login-Auth/JWT"
-	"github.com/Pdv2323/Login-Auth/db"
 	"github.com/Pdv2323/Login-Auth/models"
 	"github.com/gin-gonic/gin"
 )
 
 var Users map[string]models.User
+var db *sql.DB
 
 // var Users models.User
 
 func UserSignUp(c *gin.Context) {
 	var u models.User
-	db.ConnectDB()
+
+	// db, err := db.ConnectDB()
+	// if err != nil {
+	// 	log.Println(err)
+	// }
+	// db.ConnectDB()
 
 	err := c.BindJSON(&u)
 	if err != nil {
