@@ -125,15 +125,17 @@ import (
 
 	auth "github.com/Pdv2323/Login-Auth/Auth"
 	jwt "github.com/Pdv2323/Login-Auth/JWT"
-	"github.com/Pdv2323/Login-Auth/forgotpass"
+	onetimepass "github.com/Pdv2323/Login-Auth/otp"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 type User struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	gorm.Model
+	Email    string `json:"email" gorm:"not null"`
+	Password string `json:"password" gorm:"not null"`
+	OTP      int    `json:"otp" gorm:"int"`
 }
 
 const (
@@ -236,6 +238,63 @@ func ConnectDB() error {
 	return nil
 }
 
+func ForgetPass(c *gin.Context) {
+	var input struct {
+		Email string `json:"email"`
+	}
+
+	if err := c.BindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": true, "message": "Invalid Request"})
+		return
+	}
+
+	var u User
+
+	result := db.Where("email = ?", input.Email).First(&u)
+	if result.Error != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": true, "message": "User not found or Invalid email"})
+	}
+
+	otp := onetimepass.GenerateOtp()
+	err := onetimepass.SendEmail(input.Email, otp)
+	if err != nil {
+		log.Fatalf("Error sending email to %s.", input.Email)
+	}
+
+	fmt.Println("OTP sent successfully! Check your email.")
+	u.OTP = otp
+	db.Save(&u)
+
+	c.JSON(http.StatusOK, gin.H{"error": false, "message": "Reset token generated successfully"})
+
+}
+func ResetPass(c *gin.Context) {
+	var input struct {
+		Email       string `json:"email"`
+		OTP         int    `json:"otp"`
+		NewPassword string `json:"password"`
+	}
+
+	if err := c.BindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": true})
+		return
+	}
+
+	var u User
+
+	result := db.Where("email = ? AND otp = ?", input.Email, input.OTP).First(&u)
+	if result.Error != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": true, "message": "Invalid OTP"})
+		return
+	}
+
+	u.Password = input.NewPassword
+	u.OTP = input.OTP
+	db.Save(&u)
+
+	c.JSON(http.StatusOK, gin.H{"error": false, "message": "Password reset successfully"})
+}
+
 func main() {
 
 	err := ConnectDB()
@@ -258,8 +317,8 @@ func main() {
 	r.POST("/signup", UserSignUp)
 	r.Use(auth.Authz())
 	r.GET("/data1", GetAll)
-	r.POST("/forgotpass", forgotpass.ForgetPass)
-	r.POST("/resetpass", forgotpass.ResetPass)
+	r.POST("/forgotpass", ForgetPass)
+	r.POST("/resetpass", ResetPass)
 
 	r.Run(":8000")
 

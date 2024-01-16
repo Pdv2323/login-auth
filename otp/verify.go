@@ -1,6 +1,6 @@
-package otp
+package onetimepass
 
-func VerifyOtp(otp, newOtp string) string {
+func VerifyOtp(otp, newOtp int) string {
 	// fmt.Scanln("Enter the Otp you received : ", &otp)
 	if otp != newOtp {
 		return "OTP Incorrect!!"
