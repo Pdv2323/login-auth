@@ -40,4 +40,5 @@ type User struct {
 	// Id       string `json:"id" gorm:"primaryKey"`
 	Email    string `json:"email" gorm:"primaryKey"`
 	Password string `json:"-" gorm:"not null"`
+	OTP      string `json:"otp"`
 }
