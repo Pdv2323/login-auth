@@ -31,11 +31,11 @@ func ConnectDB() error {
 		return err
 	}
 
-	// err = db.AutoMigrate(&Users)
-	// if err != nil {
-	// 	log.Fatalf("Failed to auto migrate database: %v", err)
-	// 	return err
-	// }
+	err = db.AutoMigrate(&Users)
+	if err != nil {
+		log.Fatalf("Failed to auto migrate database: %v", err)
+		return err
+	}
 	log.Println("Connected to the database successfully")
 	return nil
 }
