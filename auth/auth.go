@@ -3,7 +3,6 @@ package auth
 import (
 	"strings"
 
-	jwt "github.com/Pdv2323/Login-Auth/JWT"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,7 +25,7 @@ func Authz() gin.HandlerFunc {
 			return
 		}
 
-		JwtWrapper1 := jwt.JwtWrapper{
+		JwtWrapper1 := JwtWrapper{
 			SecretKey: "esabrfbafbaebhg2425942942",
 			Issuer:    "admin",
 		}

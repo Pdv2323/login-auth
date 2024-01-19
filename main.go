@@ -1,32 +1,34 @@
 package main
 
 import (
-	auth "github.com/Pdv2323/Login-Auth/Auth"
-	database "github.com/Pdv2323/Login-Auth/db"
-	"github.com/Pdv2323/Login-Auth/login"
-	"github.com/Pdv2323/Login-Auth/signin"
+	"log"
+
+	"github.com/Pdv2323/login-auth/auth"
+	database "github.com/Pdv2323/login-auth/db"
+	"github.com/Pdv2323/login-auth/pkg"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
+
+var db *gorm.DB
 
 func main() {
 
+	err := database.ConnectDB()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	r := gin.Default()
 
-	// r.GET("/hello", func(c *gin.Context) {
-	// 	c.String(http.StatusOK, "Welcome to Login Authentication!!")
-	// })
-	// r.POST("/signin", signin.CreateUser)
-	// r.GET("/user")
-	// r.GET("/user/{id}")
-	// r.DELETE("/user/{id}")
-	database.ConnectDB()
-	r.POST("/dbsignup", database.SignupToDatabase)
-	r.POST("/dblogin", database.LoginUsingDatabase)
-	r.POST("/login", login.UserLogin)
-	r.POST("/signup", signin.UserSignUp)
-	r.Use(auth.Authz())
-	r.GET("/data1", login.GetAll)
+	r.POST("/login", pkg.UserLogin)
+	r.POST("/signup", pkg.UserSignUp)
+	r.POST("/otp", pkg.GenerateAndSendOTP)
+	r.POST("/changepass", pkg.ChangePasswordWithOTP)
+	r.POST("/forgotpass", pkg.ForgetPass)
+	r.POST("/resetpass", pkg.ResetPass)
+	r.Use(auth.Authz()).GET("/data1", pkg.GetAll)
 
-	r.Run(":8000")
+	r.Run(":1234")
 
 }

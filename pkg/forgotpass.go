@@ -1,16 +1,13 @@
-package forgotpass
+package pkg
 
 import (
+	"log"
 	"net/http"
 
-	"github.com/Pdv2323/Login-Auth/models"
-	"github.com/Pdv2323/Login-Auth/otp"
-
+	"github.com/Pdv2323/login-auth/models"
+	onetimepass "github.com/Pdv2323/login-auth/otp"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
-
-var db *gorm.DB
 
 func ForgetPass(c *gin.Context) {
 	var input struct {
@@ -22,16 +19,22 @@ func ForgetPass(c *gin.Context) {
 		return
 	}
 
-	var user models.User
+	var u models.User
 
-	result := db.Where("email = ?", input.Email).First(&user)
+	result := db.Where("email = ?", input.Email).First(&u)
 	if result.Error != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": true, "message": "User not found or Invalid email"})
 	}
 
-	otp := otp.GenerateOtp()
-	user.OTP = otp
-	db.Save(&user)
+	otp := onetimepass.GenerateOtp()
+
+	u.OTP = otp
+	db.Save(&u)
+
+	err := onetimepass.SendEmail(input.Email, otp)
+	if err != nil {
+		log.Fatalf("Error sending email to %s.", input.Email)
+	}
 
 	c.JSON(http.StatusOK, gin.H{"error": false, "message": "Reset token generated successfully"})
 
