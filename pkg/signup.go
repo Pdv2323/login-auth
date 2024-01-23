@@ -11,10 +11,22 @@ import (
 	"gorm.io/gorm"
 )
 
+type User struct {
+	gorm.Model
+	Email    string `json:"email" gorm:"primaryKey"`
+	Password string `json:"-" gorm:"not null"`
+	OTP      string `json:"otp"`
+}
+
 var db *gorm.DB
 
 func UserSignUp(c *gin.Context) {
-	var u models.User
+	var u User
+
+	// err := database.ConnectDB()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
 	err := c.BindJSON(&u)
 	if err != nil {

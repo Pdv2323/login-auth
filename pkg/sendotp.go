@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Pdv2323/login-auth/models"
 	onetimepass "github.com/Pdv2323/login-auth/otp"
 	"github.com/gin-gonic/gin"
 )
@@ -22,7 +21,7 @@ func GenerateAndSendOTP(c *gin.Context) {
 	otp := onetimepass.GenerateOtp()
 
 	// Save OTP and its expiry time in the database
-	var user models.User
+	var user User
 	result := db.Where("email = ?", input.Email).First(&user)
 	if result.Error != nil {
 		log.Println("User not found")

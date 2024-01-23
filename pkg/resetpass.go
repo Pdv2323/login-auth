@@ -3,7 +3,6 @@ package pkg
 import (
 	"net/http"
 
-	"github.com/Pdv2323/login-auth/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,7 +18,7 @@ func ResetPass(c *gin.Context) {
 		return
 	}
 
-	var u models.User
+	var u User
 
 	result := db.Where("email = ? AND otp = ?", input.Email, input.OTP).First(&u)
 	if result.Error != nil {

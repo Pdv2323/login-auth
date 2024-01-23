@@ -21,6 +21,11 @@ func main() {
 
 	r := gin.Default()
 
+	r.Use(func(c *gin.Context) {
+		c.Set("db", db)
+		c.Next()
+	})
+
 	r.POST("/login", pkg.UserLogin)
 	r.POST("/signup", pkg.UserSignUp)
 	r.POST("/otp", pkg.GenerateAndSendOTP)

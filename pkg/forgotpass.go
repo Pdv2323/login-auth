@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Pdv2323/login-auth/models"
 	onetimepass "github.com/Pdv2323/login-auth/otp"
 	"github.com/gin-gonic/gin"
 )
@@ -19,7 +18,7 @@ func ForgetPass(c *gin.Context) {
 		return
 	}
 
-	var u models.User
+	var u User
 
 	result := db.Where("email = ?", input.Email).First(&u)
 	if result.Error != nil {

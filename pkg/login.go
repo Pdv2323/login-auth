@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Pdv2323/login-auth/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,7 +11,7 @@ import (
 // var Users = signin.Users
 
 func UserLogin(c *gin.Context) {
-	var u models.User
+	var u User
 
 	err := c.BindJSON(&u)
 	if err != nil {
@@ -20,7 +19,7 @@ func UserLogin(c *gin.Context) {
 		return
 	}
 
-	var userfromDB models.User
+	var userfromDB User
 
 	result := db.Where("email = ?", u.Email).First(&userfromDB)
 	if result.Error != nil {

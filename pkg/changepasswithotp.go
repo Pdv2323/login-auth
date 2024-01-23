@@ -3,7 +3,6 @@ package pkg
 import (
 	"net/http"
 
-	"github.com/Pdv2323/login-auth/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,7 +18,7 @@ func ChangePasswordWithOTP(c *gin.Context) {
 		return
 	}
 
-	var user models.User
+	var user User
 	result := db.Where("email = ? AND otp = ?", input.Email, input.OTP).First(&user)
 	if result.Error != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": true, "message": "Invalid OTP"})
