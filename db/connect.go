@@ -9,8 +9,8 @@ import (
 	"gorm.io/gorm"
 )
 
-var db *gorm.DB
-var Users models.User
+// var db *gorm.DB
+// var Users models.User
 
 const (
 	dbHost     = "localhost"
@@ -20,22 +20,25 @@ const (
 	dbPassword = "qwerty"
 )
 
-func ConnectDB() error {
+func ConnectDB() (*gorm.DB, error) {
+	var Users models.User
+
 	dbInfo := fmt.Sprintf("host=%s port=%d dbname=%s user=%s password=%s sslmode=disable",
 		dbHost, dbPort, dbName, dbUser, dbPassword)
 
 	var err error
+	var db *gorm.DB
 	db, err = gorm.Open(postgres.Open(dbInfo), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("Failed to connect to the database: %v", err)
-		return err
+		return nil, err
 	}
 
 	err = db.AutoMigrate(&Users)
 	if err != nil {
 		log.Fatalf("Failed to auto migrate database: %v", err)
-		return err
+		return nil, err
 	}
 	log.Println("Connected to the database successfully")
-	return nil
+	return db, nil
 }

@@ -6,11 +6,13 @@ import (
 	"net/http"
 
 	"github.com/Pdv2323/login-auth/auth"
-	"github.com/Pdv2323/login-auth/models"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
+type Server struct {
+	Db *gorm.DB
+}
 type User struct {
 	gorm.Model
 	Email    string `json:"email" gorm:"primaryKey"`
@@ -20,7 +22,7 @@ type User struct {
 
 var db *gorm.DB
 
-func UserSignUp(c *gin.Context) {
+func (s Server) UserSignUp(c *gin.Context) {
 	var u User
 
 	// err := database.ConnectDB()
@@ -34,15 +36,15 @@ func UserSignUp(c *gin.Context) {
 		return
 	}
 
-	var existingUser models.User
+	var existingUser User
 
-	result := db.Where("email = ?", u.Email).First(&existingUser)
+	result := s.Db.Where("email = ?", u.Email).First(&existingUser)
 	if result.Error == nil {
 		c.JSON(http.StatusConflict, gin.H{"error": true, "message": "User already exists"})
 		return
 	}
 
-	result = db.Create(&u)
+	result = s.Db.Create(&u)
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": true, "message": "Failed to create user"})
 	}
